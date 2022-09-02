@@ -1,0 +1,232 @@
+{
+    "modules": [
+        {
+            "id": "cfa916fa-3154-4484-8ff4-b361c617a9d1",
+            "type": "PlayPrompt",
+            "branches": [
+                {
+                    "condition": "Success",
+                    "transition": "e7114fda-5e84-4f04-8653-453c06467fea"
+                },
+                {
+                    "condition": "Error",
+                    "transition": "e7114fda-5e84-4f04-8653-453c06467fea"
+                }
+            ],
+            "parameters": [
+                {
+                    "name": "Text",
+                    "value": "<speak>\nWelcome to the Contact Centre.\n\n<break time=\"250ms\"/>\n\nYou will now be placed in the queue and an agent will answer your call as soon as possible.\n</speak>",
+                    "namespace": null
+                },
+                {
+                    "name": "TextToSpeechType",
+                    "value": "ssml"
+                }
+            ],
+            "metadata": {
+                "position": {
+                    "x": 177,
+                    "y": 28
+                },
+                "useDynamic": false
+            }
+        },
+        {
+            "id": "e7114fda-5e84-4f04-8653-453c06467fea",
+            "type": "SetQueue",
+            "branches": [
+                {
+                    "condition": "Success",
+                    "transition": "5eb76792-e6e5-4bd1-a7d9-15fb4f3e636c"
+                },
+                {
+                    "condition": "Error",
+                    "transition": "5eb76792-e6e5-4bd1-a7d9-15fb4f3e636c"
+                }
+            ],
+            "parameters": [
+                {
+                    "name": "Queue",
+                    "value": "arn:aws:connect:<region>:<account_id>:instance/<instance_id>",
+                    "namespace": null,
+                    "resourceName": "BasicQueue"
+                }
+            ],
+            "metadata": {
+                "position": {
+                    "x": 403,
+                    "y": 24.75
+                },
+                "useDynamic": false,
+                "queue": {
+                    "id": "arn:aws:connect:<region>:<account_id>:instance/<instance_id>",
+                    "text": "BasicQueue"
+                }
+            }
+        },
+        {
+            "id": "f0937e52-207c-4d0b-8516-5f0d5824cfe5",
+            "type": "Disconnect",
+            "branches": [],
+            "parameters": [],
+            "metadata": {
+                "position": {
+                    "x": 1618,
+                    "y": 109
+                }
+            }
+        },
+        {
+            "id": "889f8ff8-a694-493f-8886-3be4eb351da5",
+            "type": "PlayPrompt",
+            "branches": [
+                {
+                    "condition": "Success",
+                    "transition": "f0937e52-207c-4d0b-8516-5f0d5824cfe5"
+                },
+                {
+                    "condition": "Error",
+                    "transition": "f0937e52-207c-4d0b-8516-5f0d5824cfe5"
+                }
+            ],
+            "parameters": [
+                {
+                    "name": "Text",
+                    "value": "Unfortunately there was an issue connecting you with an Agent. Please try again later.",
+                    "namespace": null
+                },
+                {
+                    "name": "TextToSpeechType",
+                    "value": "text"
+                }
+            ],
+            "metadata": {
+                "position": {
+                    "x": 1366,
+                    "y": 27
+                },
+                "useDynamic": false
+            }
+        },
+        {
+            "id": "91816924-73c0-42c4-afa1-7ceff0ff8e55",
+            "type": "Transfer",
+            "branches": [
+                {
+                    "condition": "AtCapacity",
+                    "transition": "889f8ff8-a694-493f-8886-3be4eb351da5"
+                },
+                {
+                    "condition": "Error",
+                    "transition": "889f8ff8-a694-493f-8886-3be4eb351da5"
+                }
+            ],
+            "parameters": [],
+            "metadata": {
+                "position": {
+                    "x": 1127,
+                    "y": 25
+                },
+                "useDynamic": false,
+                "queue": null
+            },
+            "target": "Queue"
+        },
+        {
+            "id": "5eb76792-e6e5-4bd1-a7d9-15fb4f3e636c",
+            "type": "SetEventHook",
+            "branches": [
+                {
+                    "condition": "Success",
+                    "transition": "851e7952-fa1c-4b98-b66b-9c2e85523249"
+                },
+                {
+                    "condition": "Error",
+                    "transition": "851e7952-fa1c-4b98-b66b-9c2e85523249"
+                }
+            ],
+            "parameters": [
+                {
+                    "name": "Type",
+                    "value": "CustomerQueue"
+                },
+                {
+                    "name": "ContactFlowId",
+                    "value": "arn:aws:connect:<region>:<account_id>:instance/<instance_id>/contact-flow/743f1022-3422-4125-ba89-d35126245d38",
+                    "resourceName": "Customer Queue"
+                }
+            ],
+            "metadata": {
+                "position": {
+                    "x": 627,
+                    "y": 23
+                },
+                "contactFlow": {
+                    "id": "arn:aws:connect:<region>:<account_id>:instance/<instance_id>/contact-flow/743f1022-3422-4125-ba89-d35126245d38",
+                    "text": "Customer Queue",
+                    "arn": null,
+                    "metricDetail": null,
+                    "resourceId": null
+                },
+                "customerOrAgent": true,
+                "useDynamic": false
+            }
+        },
+        {
+            "id": "851e7952-fa1c-4b98-b66b-9c2e85523249",
+            "type": "SetEventHook",
+            "branches": [
+                {
+                    "condition": "Success",
+                    "transition": "91816924-73c0-42c4-afa1-7ceff0ff8e55"
+                },
+                {
+                    "condition": "Error",
+                    "transition": "91816924-73c0-42c4-afa1-7ceff0ff8e55"
+                }
+            ],
+            "parameters": [
+                {
+                    "name": "Type",
+                    "value": "CustomerWhisper"
+                },
+                {
+                    "name": "ContactFlowId",
+                    "value": "arn:aws:connect:<region>:<account_id>:instance/<instance_id>/contact-flow/7ba9c334-cffa-4300-8a2b-aaf466009d83",
+                    "resourceName": "Customer Whisper"
+                }
+            ],
+            "metadata": {
+                "position": {
+                    "x": 881,
+                    "y": 28
+                },
+                "contactFlow": {
+                    "id": "arn:aws:connect:<region>:<account_id>:instance/<instance_id>/contact-flow/7ba9c334-cffa-4300-8a2b-aaf466009d83",
+                    "text": "Customer Whisper",
+                    "arn": null,
+                    "metricDetail": null,
+                    "resourceId": null
+                },
+                "customerOrAgent": true,
+                "useDynamic": false
+            }
+        }
+    ],
+    "version": "1",
+    "start": "cfa916fa-3154-4484-8ff4-b361c617a9d1",
+    "metadata": {
+        "entryPointPosition": {
+            "x": 15,
+            "y": 15
+        },
+        "snapToGrid": false,
+        "name": "Inbound Flow",
+        "description": null,
+        "type": "contactFlow",
+        "status": "published",
+        "hash": "474c83346665aba81ee3fa39eb759a093b06db8fc6ec4b84d2ed841d99e840ba"
+    },
+    "type": "contactFlow"
+}

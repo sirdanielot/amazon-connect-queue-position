@@ -1,0 +1,117 @@
+{
+ "Metadata": {
+  "AWS::CloudFormation::Interface": {
+   "ParameterGroups": [
+    {
+     "Label": {
+      "default": "Deployment Configuration"
+     },
+     "Parameters": [
+      "amazonconnectidparam",
+      "deployments3bucket",
+      "deploymentlambdakey"
+     ]
+    }
+   ],
+   "ParameterLabels": {
+    "amazonconnectidparam": {
+     "default": "Amazon Connect Instance ID"
+    },
+    "deployments3bucket": {
+     "default": "Deployment S3 Bucket"
+    },
+    "deploymentlambdakey": {
+     "default": "Lambda Zip Key"
+    }
+   }
+  }
+ },
+ "Parameters": {
+  "amazonconnectidparam": {
+   "Type": "String",
+   "Default": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
+   "MinLength": 36
+  },
+  "deployments3bucket": {
+   "Type": "String",
+   "Default": "deployment-bucket",
+   "MinLength": 1
+  },
+  "deploymentlambdakey": {
+   "Type": "String",
+   "Default": "lambda.zip",
+   "MinLength": 1
+  }
+ },
+ "Resources": {
+  "amazonconnectqueueposition9EBA7652": {
+   "Type": "AWS::DynamoDB::Table",
+   "Properties": {
+    "KeySchema": [
+     {
+      "AttributeName": "contact_id",
+      "KeyType": "HASH"
+     },
+     {
+      "AttributeName": "stored_time",
+      "KeyType": "RANGE"
+     }
+    ],
+    "AttributeDefinitions": [
+     {
+      "AttributeName": "contact_id",
+      "AttributeType": "S"
+     },
+     {
+      "AttributeName": "stored_time",
+      "AttributeType": "N"
+     }
+    ],
+    "ProvisionedThroughput": {
+     "ReadCapacityUnits": 5,
+     "WriteCapacityUnits": 5
+    },
+    "SSESpecification": {
+     "SSEEnabled": true
+    },
+    "TableName": "amazon-connect-queue-position"
+   },
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete",
+   "Metadata": {
+    "aws:cdk:path": "amazon-connect-queue-position/amazon-connect-queue-position/Resource"
+   }
+  },
+  "amazonconnectlambdaqueueroleE1DBB438": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "lambda.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "Description": "Role used by the Amazon Connect Queue Lambda Function",
+    "RoleName": "amazon-connect-lambda-queue-role"
+   },
+   "Metadata": {
+    "aws:cdk:path": "amazon-connect-queue-position/amazon-connect-lambda-queue-role/Resource"
+   }
+  },
+  "CDKMetadata": {
+   "Type": "AWS::CDK::Metadata",
+   "Properties": {
+    "Analytics": "v2:deflate64:H4sIAAAAAAAA/y2KQQ7CIBBFz9L9MBpcNK69QIPuzRTGiC2QAI1pCHe3La7ey/tfouzx3NE3CW0mMdsRyz2TnuD28gNFcpw5wrY/i1k9uWC2x4PGmffHIRUsOSwqtLazVlCcwhJ1S3+vMKz5HfzpgleU3SdZK+Lis3WMqvEHJX1tnpEAAAA="
+   },
+   "Metadata": {
+    "aws:cdk:path": "amazon-connect-queue-position/CDKMetadata/Default"
+   }
+  }
+ }
+}

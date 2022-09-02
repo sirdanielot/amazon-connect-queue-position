@@ -1,0 +1,73 @@
+{
+    "modules": [
+        {
+            "id": "f67f333a-7ca0-49ea-82b0-d553acd46b8d",
+            "type": "Resume",
+            "branches": [],
+            "parameters": [],
+            "metadata": {
+                "position": {
+                    "x": 467,
+                    "y": 90.75
+                }
+            }
+        },
+        {
+            "id": "40b49520-aef6-4ee4-a02f-6a3afd7cd3df",
+            "type": "InvokeExternalResource",
+            "branches": [
+                {
+                    "condition": "Success",
+                    "transition": "f67f333a-7ca0-49ea-82b0-d553acd46b8d"
+                },
+                {
+                    "condition": "Error",
+                    "transition": "f67f333a-7ca0-49ea-82b0-d553acd46b8d"
+                }
+            ],
+            "parameters": [
+                {
+                    "name": "FunctionArn",
+                    "value": "arn:aws:lambda:<region>:<account_id>:function:amazon-connect-queue-lambda",
+                    "namespace": null
+                },
+                {
+                    "name": "TimeLimit",
+                    "value": "3"
+                },
+                {
+                    "name": "Parameter",
+                    "key": "Function",
+                    "value": "remove_queue_position",
+                    "namespace": null
+                }
+            ],
+            "metadata": {
+                "position": {
+                    "x": 191,
+                    "y": 33
+                },
+                "dynamicMetadata": {
+                    "Function": false
+                },
+                "useDynamic": false
+            },
+            "target": "Lambda"
+        }
+    ],
+    "version": "1",
+    "start": "40b49520-aef6-4ee4-a02f-6a3afd7cd3df",
+    "metadata": {
+        "entryPointPosition": {
+            "x": 20,
+            "y": 20
+        },
+        "snapToGrid": false,
+        "name": "Customer Whisper",
+        "description": null,
+        "type": "customerWhisper",
+        "status": "published",
+        "hash": "58ef986295282ab4c5a24277ddefd4fb89d7d4802681e3f86383e09e52e0fa76"
+    },
+    "type": "customerWhisper"
+}

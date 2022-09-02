@@ -1,0 +1,58 @@
+{
+  "Version": "2019-10-30",
+  "StartAction": "40b49520-aef6-4ee4-a02f-6a3afd7cd3df",
+  "Metadata": {
+    "entryPointPosition": {
+      "x": 20,
+      "y": 20
+    },
+    "snapToGrid": false,
+    "ActionMetadata": {
+      "f67f333a-7ca0-49ea-82b0-d553acd46b8d": {
+        "position": {
+          "x": 467,
+          "y": 90.75
+        }
+      },
+      "40b49520-aef6-4ee4-a02f-6a3afd7cd3df": {
+        "position": {
+          "x": 191,
+          "y": 33
+        },
+        "dynamicMetadata": {
+          "Function": false
+        },
+        "useDynamic": false
+      }
+    }
+  },
+  "Actions": [
+    {
+      "Identifier": "f67f333a-7ca0-49ea-82b0-d553acd46b8d",
+      "Parameters": {},
+      "Transitions": {},
+      "Type": "EndFlowExecution"
+    },
+    {
+      "Identifier": "40b49520-aef6-4ee4-a02f-6a3afd7cd3df",
+      "Parameters": {
+        "LambdaFunctionARN": "arn:aws:lambda:<region>:<account_id>:function:amazon-connect-queue-lambda",
+        "InvocationTimeLimitSeconds": "3",
+        "LambdaInvocationAttributes": {
+          "Function": "remove_queue_position"
+        }
+      },
+      "Transitions": {
+        "NextAction": "f67f333a-7ca0-49ea-82b0-d553acd46b8d",
+        "Errors": [
+          {
+            "NextAction": "f67f333a-7ca0-49ea-82b0-d553acd46b8d",
+            "ErrorType": "NoMatchingError"
+          }
+        ],
+        "Conditions": []
+      },
+      "Type": "InvokeLambdaFunction"
+    }
+  ]
+}

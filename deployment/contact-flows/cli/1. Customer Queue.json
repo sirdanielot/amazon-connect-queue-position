@@ -1,0 +1,190 @@
+{
+  "Version": "2019-10-30",
+  "StartAction": "31d7da02-b700-4768-9d85-3c75827c747b",
+  "Metadata": {
+    "entryPointPosition": {
+      "x": 15,
+      "y": 15
+    },
+    "snapToGrid": false,
+    "ActionMetadata": {
+      "7f4cb9f3-c6f5-4dfa-b396-6b35f987c3cc": {
+        "position": {
+          "x": 406,
+          "y": 263
+        },
+        "useDynamic": false
+      },
+      "d97f8ace-5916-4eb6-82c2-af6e514fbd95": {
+        "position": {
+          "x": 646,
+          "y": 321
+        }
+      },
+      "31d7da02-b700-4768-9d85-3c75827c747b": {
+        "position": {
+          "x": 150,
+          "y": 18
+        },
+        "dynamicMetadata": {
+          "Function": false
+        },
+        "useDynamic": false
+      },
+      "6f9b91b6-ce50-4f63-98e3-3ba0d88caad8": {
+        "position": {
+          "x": 142,
+          "y": 262
+        },
+        "dynamicParams": [
+          "queue_position"
+        ]
+      },
+      "ce742889-13f5-4ea6-b8cf-f015bffd9345": {
+        "position": {
+          "x": 404,
+          "y": 21
+        },
+        "audio": [
+          {
+            "id": "arn:aws:connect:<region>:<account_id>:instance/<instance_id>/prompt/<CustomerQueue.wav Prompt ID>",
+            "text": "CustomerQueue.wav",
+            "type": "Prompt"
+          }
+        ],
+        "timeoutUnit": {
+          "display": "Seconds",
+          "value": "sec"
+        }
+      },
+      "b0b57032-04d5-4246-8028-81b15b8ad51e": {
+        "position": {
+          "x": 630,
+          "y": 18.75
+        },
+        "dynamicMetadata": {
+          "Function": false
+        },
+        "useDynamic": false
+      }
+    }
+  },
+  "Actions": [
+    {
+      "Identifier": "7f4cb9f3-c6f5-4dfa-b396-6b35f987c3cc",
+      "Parameters": {
+        "Text": "Thanks for staying on the line. You are currently number $.Attributes.queue_position in the queue."
+      },
+      "Transitions": {
+        "NextAction": "d97f8ace-5916-4eb6-82c2-af6e514fbd95",
+        "Errors": [
+          {
+            "NextAction": "d97f8ace-5916-4eb6-82c2-af6e514fbd95",
+            "ErrorType": "NoMatchingError"
+          }
+        ],
+        "Conditions": []
+      },
+      "Type": "MessageParticipant"
+    },
+    {
+      "Identifier": "d97f8ace-5916-4eb6-82c2-af6e514fbd95",
+      "Parameters": {},
+      "Transitions": {},
+      "Type": "EndFlowExecution"
+    },
+    {
+      "Identifier": "31d7da02-b700-4768-9d85-3c75827c747b",
+      "Parameters": {
+        "LambdaFunctionARN": "arn:aws:lambda:<region>:<account_id>:function:amazon-connect-queue-lambda",
+        "InvocationTimeLimitSeconds": "3",
+        "LambdaInvocationAttributes": {
+          "Function": "add_to_queue"
+        }
+      },
+      "Transitions": {
+        "NextAction": "ce742889-13f5-4ea6-b8cf-f015bffd9345",
+        "Errors": [
+          {
+            "NextAction": "ce742889-13f5-4ea6-b8cf-f015bffd9345",
+            "ErrorType": "NoMatchingError"
+          }
+        ],
+        "Conditions": []
+      },
+      "Type": "InvokeLambdaFunction"
+    },
+    {
+      "Identifier": "6f9b91b6-ce50-4f63-98e3-3ba0d88caad8",
+      "Parameters": {
+        "Attributes": {
+          "queue_position": "$.External.queue_position"
+        }
+      },
+      "Transitions": {
+        "NextAction": "7f4cb9f3-c6f5-4dfa-b396-6b35f987c3cc",
+        "Errors": [
+          {
+            "NextAction": "7f4cb9f3-c6f5-4dfa-b396-6b35f987c3cc",
+            "ErrorType": "NoMatchingError"
+          }
+        ],
+        "Conditions": []
+      },
+      "Type": "UpdateContactAttributes"
+    },
+    {
+      "Identifier": "ce742889-13f5-4ea6-b8cf-f015bffd9345",
+      "Parameters": {
+        "InterruptFrequencySeconds": "5",
+        "Messages": [
+          {
+            "PromptId": "arn:aws:connect:<region>:<account_id>:instance/<instance_id>/prompt/<CustomerQueue.wav Prompt ID>"
+          }
+        ]
+      },
+      "Transitions": {
+        "NextAction": "b0b57032-04d5-4246-8028-81b15b8ad51e",
+        "Errors": [
+          {
+            "NextAction": "b0b57032-04d5-4246-8028-81b15b8ad51e",
+            "ErrorType": "NoMatchingError"
+          }
+        ],
+        "Conditions": [
+          {
+            "NextAction": "b0b57032-04d5-4246-8028-81b15b8ad51e",
+            "Condition": {
+              "Operator": "Equals",
+              "Operands": [
+                "MessagesInterrupted"
+              ]
+            }
+          }
+        ]
+      },
+      "Type": "MessageParticipantIteratively"
+    },
+    {
+      "Identifier": "b0b57032-04d5-4246-8028-81b15b8ad51e",
+      "Parameters": {
+        "LambdaFunctionARN": "arn:aws:lambda:<region>:<account_id>:function:amazon-connect-queue-lambda",
+        "InvocationTimeLimitSeconds": "3",
+        "LambdaInvocationAttributes": {
+          "Function": "get_queue_position"
+        }
+      },
+      "Transitions": {
+        "NextAction": "6f9b91b6-ce50-4f63-98e3-3ba0d88caad8",
+        "Errors": [
+          {
+            "NextAction": "6f9b91b6-ce50-4f63-98e3-3ba0d88caad8",
+            "ErrorType": "NoMatchingError"
+          }
+        ],
+        "Conditions": []
+      },
+      "Type": "InvokeLambdaFunction"
+    }
+  ]
+}

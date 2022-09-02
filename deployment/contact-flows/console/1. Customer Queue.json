@@ -1,0 +1,220 @@
+{
+    "modules": [
+        {
+            "id": "7f4cb9f3-c6f5-4dfa-b396-6b35f987c3cc",
+            "type": "PlayPrompt",
+            "branches": [
+                {
+                    "condition": "Success",
+                    "transition": "d97f8ace-5916-4eb6-82c2-af6e514fbd95"
+                },
+                {
+                    "condition": "Error",
+                    "transition": "d97f8ace-5916-4eb6-82c2-af6e514fbd95"
+                }
+            ],
+            "parameters": [
+                {
+                    "name": "Text",
+                    "value": "Thanks for staying on the line. You are currently number $.Attributes.queue_position in the queue.",
+                    "namespace": null
+                },
+                {
+                    "name": "TextToSpeechType",
+                    "value": "text"
+                }
+            ],
+            "metadata": {
+                "position": {
+                    "x": 406,
+                    "y": 263
+                },
+                "useDynamic": false
+            }
+        },
+        {
+            "id": "d97f8ace-5916-4eb6-82c2-af6e514fbd95",
+            "type": "Resume",
+            "branches": [],
+            "parameters": [],
+            "metadata": {
+                "position": {
+                    "x": 646,
+                    "y": 321
+                }
+            }
+        },
+        {
+            "id": "31d7da02-b700-4768-9d85-3c75827c747b",
+            "type": "InvokeExternalResource",
+            "branches": [
+                {
+                    "condition": "Success",
+                    "transition": "ce742889-13f5-4ea6-b8cf-f015bffd9345"
+                },
+                {
+                    "condition": "Error",
+                    "transition": "ce742889-13f5-4ea6-b8cf-f015bffd9345"
+                }
+            ],
+            "parameters": [
+                {
+                    "name": "FunctionArn",
+                    "value": "arn:aws:lambda:<region>:<account_id>:function:amazon-connect-queue-lambda",
+                    "namespace": null
+                },
+                {
+                    "name": "TimeLimit",
+                    "value": "3"
+                },
+                {
+                    "name": "Parameter",
+                    "key": "Function",
+                    "value": "add_to_queue",
+                    "namespace": null
+                }
+            ],
+            "metadata": {
+                "position": {
+                    "x": 150,
+                    "y": 18
+                },
+                "dynamicMetadata": {
+                    "Function": false
+                },
+                "useDynamic": false
+            },
+            "target": "Lambda"
+        },
+        {
+            "id": "6f9b91b6-ce50-4f63-98e3-3ba0d88caad8",
+            "type": "SetAttributes",
+            "branches": [
+                {
+                    "condition": "Success",
+                    "transition": "7f4cb9f3-c6f5-4dfa-b396-6b35f987c3cc"
+                },
+                {
+                    "condition": "Error",
+                    "transition": "7f4cb9f3-c6f5-4dfa-b396-6b35f987c3cc"
+                }
+            ],
+            "parameters": [
+                {
+                    "name": "Attribute",
+                    "value": "queue_position",
+                    "key": "queue_position",
+                    "namespace": "External"
+                }
+            ],
+            "metadata": {
+                "position": {
+                    "x": 142,
+                    "y": 262
+                },
+                "dynamicParams": [
+                    "queue_position"
+                ]
+            }
+        },
+        {
+            "id": "ce742889-13f5-4ea6-b8cf-f015bffd9345",
+            "type": "LoopPrompts",
+            "branches": [
+                {
+                    "condition": "Timeout",
+                    "transition": "b0b57032-04d5-4246-8028-81b15b8ad51e"
+                },
+                {
+                    "condition": "Error",
+                    "transition": "b0b57032-04d5-4246-8028-81b15b8ad51e"
+                }
+            ],
+            "parameters": [
+                {
+                    "name": "AudioPrompt",
+                    "value": "arn:aws:connect:<region>:<account_id>:instance/<instance_id>/prompt/26571401-98ab-4cb1-a70f-143128f23285",
+                    "resourceName": "CustomerQueue.wav"
+                },
+                {
+                    "name": "InterruptSeconds",
+                    "value": 5
+                }
+            ],
+            "metadata": {
+                "position": {
+                    "x": 404,
+                    "y": 21
+                },
+                "audio": [
+                    {
+                        "id": "arn:aws:connect:<region>:<account_id>:instance/<instance_id>/prompt/26571401-98ab-4cb1-a70f-143128f23285",
+                        "text": "CustomerQueue.wav",
+                        "type": "Prompt"
+                    }
+                ],
+                "timeoutUnit": {
+                    "display": "Seconds",
+                    "value": "sec"
+                }
+            }
+        },
+        {
+            "id": "b0b57032-04d5-4246-8028-81b15b8ad51e",
+            "type": "InvokeExternalResource",
+            "branches": [
+                {
+                    "condition": "Success",
+                    "transition": "6f9b91b6-ce50-4f63-98e3-3ba0d88caad8"
+                },
+                {
+                    "condition": "Error",
+                    "transition": "6f9b91b6-ce50-4f63-98e3-3ba0d88caad8"
+                }
+            ],
+            "parameters": [
+                {
+                    "name": "FunctionArn",
+                    "value": "arn:aws:lambda:<region>:<account_id>:function:amazon-connect-queue-lambda",
+                    "namespace": null
+                },
+                {
+                    "name": "TimeLimit",
+                    "value": "3"
+                },
+                {
+                    "name": "Parameter",
+                    "key": "Function",
+                    "value": "get_queue_position",
+                    "namespace": null
+                }
+            ],
+            "metadata": {
+                "position": {
+                    "x": 630,
+                    "y": 18.75
+                },
+                "dynamicMetadata": {
+                    "Function": false
+                },
+                "useDynamic": false
+            },
+            "target": "Lambda"
+        }
+    ],
+    "version": "1",
+    "start": "31d7da02-b700-4768-9d85-3c75827c747b",
+    "metadata": {
+        "entryPointPosition": {
+            "x": 15,
+            "y": 15
+        },
+        "snapToGrid": false,
+        "name": "Customer Queue",
+        "description": null,
+        "type": "customerQueue",
+        "status": "published",
+        "hash": "c7814871f7913331f60962dc182b9d478f30309a1f02f418dfe6a08bfbf71931"
+    },
+    "type": "customerQueue"
+}

@@ -1,0 +1,190 @@
+{
+  "Version": "2019-10-30",
+  "StartAction": "cfa916fa-3154-4484-8ff4-b361c617a9d1",
+  "Metadata": {
+    "entryPointPosition": {
+      "x": 15,
+      "y": 15
+    },
+    "snapToGrid": false,
+    "ActionMetadata": {
+      "cfa916fa-3154-4484-8ff4-b361c617a9d1": {
+        "position": {
+          "x": 177,
+          "y": 28
+        },
+        "useDynamic": false
+      },
+      "e7114fda-5e84-4f04-8653-453c06467fea": {
+        "position": {
+          "x": 403,
+          "y": 24.75
+        },
+        "useDynamic": false,
+        "queue": {
+          "id": "arn:aws:connect:<region>:<account_id>:instance/<instance_id>/queue/<queue_id>",
+          "text": "<queue_name>"
+        }
+      },
+      "f0937e52-207c-4d0b-8516-5f0d5824cfe5": {
+        "position": {
+          "x": 1618,
+          "y": 109
+        }
+      },
+      "889f8ff8-a694-493f-8886-3be4eb351da5": {
+        "position": {
+          "x": 1366,
+          "y": 27
+        },
+        "useDynamic": false
+      },
+      "91816924-73c0-42c4-afa1-7ceff0ff8e55": {
+        "position": {
+          "x": 1127,
+          "y": 25
+        },
+        "useDynamic": false
+      },
+      "5eb76792-e6e5-4bd1-a7d9-15fb4f3e636c": {
+        "position": {
+          "x": 627,
+          "y": 23
+        },
+        "contactFlow": {
+          "id": "arn:aws:connect:<region>:<account_id>:instance/<instance_id>/contact-flow/<customer_queue_flow_id>",
+          "text": "Customer Queue"
+        },
+        "customerOrAgent": true,
+        "useDynamic": false
+      },
+      "851e7952-fa1c-4b98-b66b-9c2e85523249": {
+        "position": {
+          "x": 881,
+          "y": 28
+        },
+        "contactFlow": {
+          "id": "arn:aws:connect:<region>:<account_id>:instance/<instance_id>/contact-flow/<customer_whisper_flow_id>",
+          "text": "Customer Whisper"
+        },
+        "customerOrAgent": true,
+        "useDynamic": false
+      }
+    }
+  },
+  "Actions": [
+    {
+      "Identifier": "cfa916fa-3154-4484-8ff4-b361c617a9d1",
+      "Parameters": {
+        "SSML": "<speak>\nWelcome to the Contact Centre.\n\n<break time=\"250ms\"/>\n\nYou will now be placed in the queue and an agent will answer your call as soon as possible.\n</speak>"
+      },
+      "Transitions": {
+        "NextAction": "e7114fda-5e84-4f04-8653-453c06467fea",
+        "Errors": [
+          {
+            "NextAction": "e7114fda-5e84-4f04-8653-453c06467fea",
+            "ErrorType": "NoMatchingError"
+          }
+        ],
+        "Conditions": []
+      },
+      "Type": "MessageParticipant"
+    },
+    {
+      "Identifier": "e7114fda-5e84-4f04-8653-453c06467fea",
+      "Parameters": {
+        "QueueId": "arn:aws:connect:<region>:<account_id>:instance/<instance_id>/queue/<queue_id>"
+      },
+      "Transitions": {
+        "NextAction": "5eb76792-e6e5-4bd1-a7d9-15fb4f3e636c",
+        "Errors": [
+          {
+            "NextAction": "5eb76792-e6e5-4bd1-a7d9-15fb4f3e636c",
+            "ErrorType": "NoMatchingError"
+          }
+        ],
+        "Conditions": []
+      },
+      "Type": "UpdateContactTargetQueue"
+    },
+    {
+      "Identifier": "f0937e52-207c-4d0b-8516-5f0d5824cfe5",
+      "Type": "DisconnectParticipant",
+      "Parameters": {},
+      "Transitions": {}
+    },
+    {
+      "Identifier": "889f8ff8-a694-493f-8886-3be4eb351da5",
+      "Parameters": {
+        "Text": "Unfortunately there was an issue connecting you with an Agent. Please try again later."
+      },
+      "Transitions": {
+        "NextAction": "f0937e52-207c-4d0b-8516-5f0d5824cfe5",
+        "Errors": [
+          {
+            "NextAction": "f0937e52-207c-4d0b-8516-5f0d5824cfe5",
+            "ErrorType": "NoMatchingError"
+          }
+        ],
+        "Conditions": []
+      },
+      "Type": "MessageParticipant"
+    },
+    {
+      "Identifier": "91816924-73c0-42c4-afa1-7ceff0ff8e55",
+      "Transitions": {
+        "NextAction": "889f8ff8-a694-493f-8886-3be4eb351da5",
+        "Errors": [
+          {
+            "NextAction": "889f8ff8-a694-493f-8886-3be4eb351da5",
+            "ErrorType": "NoMatchingError"
+          },
+          {
+            "NextAction": "889f8ff8-a694-493f-8886-3be4eb351da5",
+            "ErrorType": "QueueAtCapacity"
+          }
+        ],
+        "Conditions": []
+      },
+      "Type": "TransferContactToQueue"
+    },
+    {
+      "Identifier": "5eb76792-e6e5-4bd1-a7d9-15fb4f3e636c",
+      "Parameters": {
+        "EventHooks": {
+          "CustomerQueue": "arn:aws:connect:<region>:<account_id>:instance/<instance_id>/contact-flow/<customer_queue_flow_id>"
+        }
+      },
+      "Transitions": {
+        "NextAction": "851e7952-fa1c-4b98-b66b-9c2e85523249",
+        "Errors": [
+          {
+            "NextAction": "851e7952-fa1c-4b98-b66b-9c2e85523249",
+            "ErrorType": "NoMatchingError"
+          }
+        ],
+        "Conditions": []
+      },
+      "Type": "UpdateContactEventHooks"
+    },
+    {
+      "Identifier": "851e7952-fa1c-4b98-b66b-9c2e85523249",
+      "Parameters": {
+        "EventHooks": {
+          "CustomerWhisper": "arn:aws:connect:<region>:<account_id>:instance/<instance_id>/contact-flow/<customer_whisper_flow_id>"
+        }
+      },
+      "Transitions": {
+        "NextAction": "91816924-73c0-42c4-afa1-7ceff0ff8e55",
+        "Errors": [
+          {
+            "NextAction": "91816924-73c0-42c4-afa1-7ceff0ff8e55",
+            "ErrorType": "NoMatchingError"
+          }
+        ],
+        "Conditions": []
+      },
+      "Type": "UpdateContactEventHooks"
+    }
+  ]
+}
